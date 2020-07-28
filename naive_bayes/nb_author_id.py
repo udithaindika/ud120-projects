@@ -14,6 +14,7 @@ import sys
 from time import time
 sys.path.append("../tools/")
 from email_preprocess import preprocess
+from sklearn.naive_bayes import GaussianNB
 
 
 ### features_train and features_test are the features for the training
@@ -21,13 +22,31 @@ from email_preprocess import preprocess
 ### labels_train and labels_test are the corresponding item labels
 features_train, features_test, labels_train, labels_test = preprocess()
 
-
-
-
 #########################################################
 ### your code goes here ###
 
+clf = GaussianNB()
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+t0 = time()
+predictions = clf.predict(features_test)
+print "predict time:", round(time()-t0, 3), "s"
+
+matchingCount = 0
+for i in range(len(labels_test)):
+    test = labels_test[i]
+    predict = predictions[i]
+    if int(test) == int(predict):
+        matchingCount += 1
+
+print matchingCount
+
+accuracy = float(matchingCount)/len(labels_test) * 100
+print "Accuracy : {}".format(accuracy)
 
 #########################################################
+
 
 

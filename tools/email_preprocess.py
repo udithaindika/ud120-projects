@@ -32,15 +32,14 @@ def preprocess(words_file = "../tools/word_data.pkl", authors_file="../tools/ema
     authors_file_handler = open(authors_file, "r")
     authors = pickle.load(authors_file_handler)
     authors_file_handler.close()
-
+    
     words_file_handler = open(words_file, "r")
     word_data = cPickle.load(words_file_handler)
     words_file_handler.close()
-
+    
     ### test_size is the percentage of events assigned to the test set
     ### (remainder go into training)
     features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(word_data, authors, test_size=0.1, random_state=42)
-
 
 
     ### text vectorization--go from strings to lists of numbers
@@ -49,14 +48,20 @@ def preprocess(words_file = "../tools/word_data.pkl", authors_file="../tools/ema
     features_train_transformed = vectorizer.fit_transform(features_train)
     features_test_transformed  = vectorizer.transform(features_test)
 
+    print features_train_transformed.shape;
 
-
+    # https://www.khanacademy.org/math/statistics-probability/analysis-of-variance-anova-library/analysis-of-variance-anova/v/anova-2-calculating-ssw-and-ssb-total-sum-of-squares-within-and-between-avi
     ### feature selection, because text is super high dimensional and 
     ### can be really computationally chewy as a result
+    print   type(labels_train)
     selector = SelectPercentile(f_classif, percentile=10)
     selector.fit(features_train_transformed, labels_train)
     features_train_transformed = selector.transform(features_train_transformed).toarray()
     features_test_transformed  = selector.transform(features_test_transformed).toarray()
+
+    print features_train_transformed.shape
+
+    print
 
     ### info on the data
     print "no. of Chris training emails:", sum(labels_train)
