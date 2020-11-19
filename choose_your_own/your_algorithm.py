@@ -70,7 +70,7 @@ def random_forest():
 
 
 def ada_boost():
-    clf = AdaBoostClassifier()
+    clf = AdaBoostClassifier(n_estimators=25)
     t0 = time()
     clf.fit(features_train, labels_train)
     print "Ada Boost training time:", round(time() - t0, 3), "s"
@@ -83,6 +83,8 @@ def ada_boost():
     return clf
 
 
+clf = k_nearest()
+clf = random_forest()
 clf = ada_boost()
 
 try:

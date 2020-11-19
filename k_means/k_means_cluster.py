@@ -11,6 +11,9 @@ import pickle
 import numpy
 import matplotlib.pyplot as plt
 import sys
+
+from sklearn.cluster import KMeans
+
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 
@@ -48,24 +51,56 @@ data_dict.pop("TOTAL", 0)
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
-features_list = [poi, feature_1, feature_2]
+features_list = [poi, feature_1, feature_2, feature_3]
 data = featureFormat(data_dict, features_list )
+
+print data
+
+
 poi, finance_features = targetFeatureSplit( data )
+print finance_features
 
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
 ### for f1, f2, _ in finance_features:
 ### (as it's currently written, the line below assumes 2 features)
-for f1, f2 in finance_features:
-    plt.scatter( f1, f2 )
+for f1, f2 , _ in finance_features:
+    plt.scatter( f1, f2  )
 plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
+#kmeans = KMeans(n_clusters=2)
+#kmeans.fit(data)
+
+kmeans =  KMeans(n_clusters=2 ).fit(finance_features,poi)
+pred = kmeans.predict(finance_features)
 
 
+min = None
+max = None
+for item in data:
+
+    if(item[1] == 0):
+        continue
+
+    if(min == None):
+        min = item[1]
+    if(max == None):
+        max = item[1]
+
+    if(item[1] < min):
+        min = item[1]
+
+    if(item[1] > max):
+        max = item[1]
+
+
+print "Min: " + str(min)
+print "Max: " + str(max)
 
 
 ### rename the "name" parameter when you change the number of features
